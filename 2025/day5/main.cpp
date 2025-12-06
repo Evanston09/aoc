@@ -47,60 +47,35 @@ int part1(string input) {
 
 long long part2(string input) {
     vector<pair<long long, long long>> fresh;
-    
-    int split = input.find("\n\n");
-    string raw_indexes = input.substr(0, split);
-    string raw_foods = input.substr(split + 2);
+    string raw = input.substr(0, input.find("\n\n"));
 
-    istringstream iss_index(raw_indexes);
+    istringstream iss(raw);
+    string line;
 
-    for (string index_line; getline(iss_index, index_line);) {
-        int dash = index_line.find("-");
-        long long start = stoll(index_line.substr(0, dash));
-        long long end = stoll(index_line.substr(dash+1));
+    while (getline(iss, line)) {
+        long long start = stoll(line.substr(0, line.find("-")));
+        long long end = stoll(line.substr(line.find("-") + 1));
 
-        if (fresh.empty()) {
-            fresh.emplace_back(make_pair(start, end));
-            continue;
+        vector<pair<long long, long long>>::iterator iter;
+        for (iter = fresh.begin(); iter != fresh.end();) {
+
+            if (iter->second < start || iter->first > end) {
+                ++iter;
+                continue;
+            }
+
+            start = min(iter->first, start);
+            end = max(iter->second, end);
+
+            iter = fresh.erase(iter);
         }
+        fresh.emplace_back(make_pair(start, end));
 
-        bool adjusted = false;
-        for (auto& range : fresh) {
-            if (range.first <= start && end <= range.second) {
-                adjusted = true;
-                break;
-            }
-
-            else if (start <= range.first && range.second <= end) {
-                range.first = start;
-                range.second = end;
-                adjusted = true;
-            }
-
-            else if (range.first <= start && start <= range.second) {
-                range.second = max(range.second, end);
-                start = range.first;
-                end = range.second;
-                adjusted = true;
-            }
-            else if (range.first <= end && end <= range.second) {
-                range.first = min(range.first, start);
-                start = range.first;
-                end = range.second;
-                adjusted = true;
-            }
-        }
-
-
-        if (!adjusted) {
-            fresh.emplace_back(make_pair(start, end));
-        }
     }
-
     long long total = 0;
-    for (auto range: fresh) {
-        total += (range.second - range.first );
-        cout <<range.first <<  range.second << endl;
+
+    for (auto line : fresh) {
+        total += (line.second - line.first + 1);
     }
     
     return total;
