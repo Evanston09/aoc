@@ -87,16 +87,12 @@ long long part1(string input) {
             }
 
         }
-        
-        if (src_group != dest_group && src_group != -1 && dest_group != -1) {
-            // Make sure indexes dont get fucked
-            int lower = min(src_group, dest_group);
-            int higher = max(src_group, dest_group);
 
-            for (const auto& box : connected[higher]) {
-                connected[lower].push_back(box);
+        if (src_group != dest_group) {
+            for (const auto& box : connected[dest_group]) {
+                connected[src_group].push_back(box);
             }
-            connected.erase(connected.begin() + higher);
+            connected.erase(connected.begin() + dest_group);
         }
     }
 
@@ -196,15 +192,11 @@ long long part2(string input) {
 
         }
         
-        if (src_group != dest_group && src_group != -1 && dest_group != -1) {
-            // Make sure indexes dont get fucked
-            int lower = min(src_group, dest_group);
-            int higher = max(src_group, dest_group);
-
-            for (const auto& box : connected[higher]) {
-                connected[lower].push_back(box);
+        if (src_group != dest_group) {
+            for (const auto& box : connected[dest_group]) {
+                connected[src_group].push_back(box);
             }
-            connected.erase(connected.begin() + higher);
+            connected.erase(connected.begin() + dest_group);
         }
 
         ++n;
@@ -222,7 +214,7 @@ int main() {
         input += i + "\n";
     }
 
-    cout << part2(input) << endl;
+    cout << part1(input) << endl;
 
     return 0;
 }
